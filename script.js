@@ -16,6 +16,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const shortBreakTimeInput = document.getElementById('shortBreakTime');
     const longBreakTimeInput = document.getElementById('longBreakTime');
 
+    // Elemen Game
+    const pigTargetArea = document.getElementById('pigTargetArea');
+    const gameScore = document.getElementById('gameScore');
+    
     // === 2. Konfigurasi Waktu (Ambil dari Local Storage atau Default) ===
     let initialDurations = JSON.parse(localStorage.getItem('pomodoroSettings')) || {
         pomodoro: 25,
@@ -28,8 +32,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let timeLeft = initialDurations[currentMode] * 60; 
     let isRunning = false;
     let timerInterval = null;
+    
+    // State Game
+    let score = 0;
+    let pigTimeout; // Menggunakan Timeout untuk mengatur munculnya babi
+    let gameActive = false; // Permainan hanya aktif setelah inisialisasi
 
-    // --- FUNGSI UTILITY (Update Display, Format Time, dll. - Tetap sama) ---
+    // --- FUNGSI UTILITY ---
     function formatTime(seconds) {
         const minutes = String(Math.floor(seconds / 60)).padStart(2, '0');
         const remainingSeconds = String(seconds % 60).padStart(2, '0');
@@ -45,9 +54,8 @@ document.addEventListener('DOMContentLoaded', () => {
         startStopBtn.textContent = isRunning ? 'Jeda' : 'Mulai';
     }
 
-    // --- FUNGSI KONTROL TIMER (tick, startTimer, pauseTimer - Tetap sama) ---
+    // --- FUNGSI KONTROL TIMER ---
     function tick() {
-        // ... (Logika tick) ...
         timeLeft--;
         updateDisplay();
 
@@ -82,7 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function switchMode(newMode) {
         pauseTimer(); 
         currentMode = newMode;
-        // Gunakan waktu dari setting yang terbaru
         timeLeft = initialDurations[currentMode] * 60; 
 
         document.querySelectorAll('.mode-selector button').forEach(btn => {
@@ -100,41 +107,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // === 4. FUNGSI PENGATURAN WAKTU (Settings Modal) ===
-    
-    // Membuka Modal
     settingsBtn.addEventListener('click', () => {
-        // Isi modal dengan nilai saat ini
         pomodoroTimeInput.value = initialDurations.pomodoro;
         shortBreakTimeInput.value = initialDurations.shortBreak;
         longBreakTimeInput.value = initialDurations.longBreak;
         settingsModal.style.display = 'block';
     });
 
-    // Menutup Modal
     closeBtn.addEventListener('click', () => {
         settingsModal.style.display = 'none';
     });
 
-    // Menyimpan Pengaturan
     saveSettingsBtn.addEventListener('click', () => {
         const newPomodoro = parseInt(pomodoroTimeInput.value);
         const newShortBreak = parseInt(shortBreakTimeInput.value);
         const newLongBreak = parseInt(longBreakTimeInput.value);
 
-        // Validasi sederhana
         if (newPomodoro > 0 && newShortBreak > 0 && newLongBreak > 0) {
-            // Update objek durasi
             initialDurations = {
                 pomodoro: newPomodoro,
                 shortBreak: newShortBreak,
                 longBreak: newLongBreak
             };
             
-            // Simpan ke Local Storage
             localStorage.setItem('pomodoroSettings', JSON.stringify(initialDurations));
 
             settingsModal.style.display = 'none';
-            // Setel ulang timer ke mode yang sedang berjalan dengan waktu baru
             switchMode(currentMode); 
         } else {
             alert("Waktu harus berupa angka positif.");
@@ -146,23 +144,76 @@ document.addEventListener('DOMContentLoaded', () => {
     // Muat tema tersimpan atau default ke light
     if (localStorage.getItem('theme') === 'dark') {
         document.body.classList.add('dark-mode');
-        themeToggleBtn.querySelector('i').classList.replace('fa-moon', 'fa-sun'); // Ganti ikon
+        // Pastikan ikon awal fa-sun (matahari) jika defaultnya dark (agar bisa diganti ke bulan)
+        themeToggleBtn.querySelector('i').classList.replace('fa-sun', 'fa-moon'); 
     }
     
     themeToggleBtn.addEventListener('click', () => {
         document.body.classList.toggle('dark-mode');
         
-        // Simpan preferensi ke Local Storage
         if (document.body.classList.contains('dark-mode')) {
             localStorage.setItem('theme', 'dark');
-            themeToggleBtn.querySelector('i').classList.replace('fa-moon', 'fa-sun');
+            themeToggleBtn.querySelector('i').classList.replace('fa-sun', 'fa-moon');
         } else {
             localStorage.setItem('theme', 'light');
-            themeToggleBtn.querySelector('i').classList.replace('fa-sun', 'fa-moon');
+            themeToggleBtn.querySelector('i').classList.replace('fa-moon', 'fa-sun');
         }
     });
 
-    // === 6. Event Listeners dan Inisialisasi (Tambahan) ===
+    // === 6. LOGIKA PERMAINAN (CATCH THE PIG) ===
+
+    function createCatchablePig() {
+        if (!pigTargetArea) return; 
+
+        // Hapus babi lama
+        pigTargetArea.innerHTML = ''; 
+
+        const pig = document.createElement('span');
+        pig.textContent = '🐷';
+        pig.classList.add('catchable-pig');
+
+        // Kalkulasi posisi acak dalam area target
+        const areaWidth = pigTargetArea.clientWidth;
+        const areaHeight = pigTargetArea.clientHeight;
+        
+        // Asumsi ukuran babi sekitar 30px, jadi kurangi dari batas area
+        const randomX = Math.random() * (areaWidth - 40); 
+        const randomY = Math.random() * (areaHeight - 40); 
+        
+        pig.style.left = `${randomX}px`;
+        pig.style.top = `${randomY}px`;
+        
+        // Event Klik Babi (Berhasil Ditangkap)
+        pig.addEventListener('click', () => {
+            score++;
+            gameScore.textContent = score;
+            pig.remove(); 
+            clearTimeout(pigTimeout); // Hentikan timer hilangnya babi
+            pigTimeout = setTimeout(spawnPig, 500); // Babi baru muncul lebih cepat
+        });
+
+        pigTargetArea.appendChild(pig);
+    }
+
+    function spawnPig() {
+        // Hanya spawn jika game area ada
+        if (gameActive) {
+            createCatchablePig();
+            // Atur agar babi hilang jika tidak diklik dalam 1.5 detik
+            pigTimeout = setTimeout(spawnPig, 1500); 
+        }
+    }
+
+    function startGame() {
+        if (pigTargetArea && gameScore) { // Pastikan elemen game ada
+            gameActive = true;
+            score = 0;
+            gameScore.textContent = score;
+            spawnPig();
+        }
+    }
+
+    // === 7. Event Listeners dan Inisialisasi ===
     
     startStopBtn.addEventListener('click', startTimer);
     resetBtn.addEventListener('click', resetTimer);
@@ -173,6 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Inisialisasi awal
+    // Inisialisasi Awal
     updateDisplay();
+    startGame(); // Mulai permainan segera setelah aplikasi dimuat
 });
