@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Florist Pomodoro Timer 🌸</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="mode-selector">
+            <button id="pomodoroBtn" data-mode="pomodoro" class="active">Pomodoro</button>
+            <button id="shortBreakBtn" data-mode="shortBreak">Istirahat Pendek</button>
+            <button id="longBreakBtn" data-mode="longBreak">Istirahat Panjang</button>
+        </div>
+
+        <div id="timerDisplay" class="timer">25:00</div>
+
+        <div class="controls">
+            <button id="startStopBtn">Mulai</button>
+            <button id="resetBtn">Reset</button>
+        </div>
+    </div>
+    
+    <audio id="alarmSound" src="alarm.mp3" preload="auto"></audio> 
+    <script src="script.js"></script>
+</body>
+</html>
