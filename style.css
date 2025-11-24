@@ -1,0 +1,69 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f2f0; /* Krem */
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="none" stroke="%23ffe4e1" stroke-width="5"/></svg>'); /* Pola lembut */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.container {
+    background: #fff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(255, 192, 203, 0.5); /* Bayangan pink */
+    text-align: center;
+    width: 350px;
+}
+
+/* Selector Mode */
+.mode-selector button {
+    background: none;
+    border: 2px solid #ffb6c1; /* Pink muda */
+    color: #333;
+    padding: 8px 15px;
+    margin: 0 5px;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: bold;
+}
+
+.mode-selector button.active {
+    background-color: #ffb6c1; /* Pink */
+    color: white;
+    border-color: #ff69b4; /* Pink gelap */
+}
+
+/* Tampilan Waktu */
+.timer {
+    font-size: 80px;
+    margin: 30px 0;
+    font-weight: 700;
+    color: #4b6f44; /* Hijau daun */
+    letter-spacing: 3px;
+    padding: 10px;
+    border: 3px solid #ffb6c1;
+    border-radius: 10px;
+}
+
+/* Tombol Kontrol */
+.controls button {
+    background-color: #ff69b4; /* Pink gelap */
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    margin: 0 10px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+.controls button:hover {
+    background-color: #ffb6c1;
+    transform: translateY(-2px);
+}
