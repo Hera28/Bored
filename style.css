@@ -62,7 +62,7 @@ body {
 
 .top-bar {
     display: flex;
-    justify-content: flex-end; /* Pindah ke kanan */
+    justify-content: flex-end; 
     gap: 10px;
     margin-bottom: 15px;
 }
@@ -71,7 +71,7 @@ body {
     background: var(--secondary-btn-bg);
     color: var(--secondary-btn-text);
     padding: 10px 12px;
-    border-radius: 50%; /* Bulat */
+    border-radius: 50%; 
     font-size: 16px;
     cursor: pointer;
     border: none;
@@ -158,16 +158,37 @@ body {
     margin-top: 15px;
 }
 
-/* === ANIMASI BABI === */
-.pig-running {
-    position: absolute;
-    bottom: -50px; 
-    left: 0;
-    font-size: 40px; 
-    z-index: 0; 
-    animation: walk 15s linear infinite; 
+/* === AREA PERMAINAN (CATCH THE PIG) === */
+.game-area {
+    margin-top: 30px;
+    padding: 15px;
+    border: 1px dashed var(--primary-btn-bg); 
+    border-radius: 10px;
+    background-color: color-mix(in srgb, var(--container-bg) 95%, white); 
+    text-align: center;
 }
 
+#pigTargetArea {
+    height: 60px; 
+    position: relative;
+    overflow: hidden; 
+}
+
+.catchable-pig {
+    position: absolute;
+    font-size: 24px;
+    cursor: pointer;
+    transition: transform 0.1s; 
+}
+
+.catchable-pig:active {
+    transform: scale(0.9);
+}
+
+/* === ANIMASI BABI (LAMA) DIHILANGKAN === */
+.pig-running {
+    display: none;
+}
 @keyframes walk {
     0% { transform: translateX(-150px); }
     100% { transform: translateX(550px); }
