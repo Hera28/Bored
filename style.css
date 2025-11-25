@@ -111,6 +111,20 @@ body {
     transition: background-color 0.3s, transform 0.1s;
 }
 
+/* === TAMPILAN SIKLUS POMODORO (TAMBAHAN BARU) === */
+.cycle-display {
+    margin-top: 20px;
+    font-size: 14px;
+    color: var(--text-color);
+}
+
+.cycle-display span {
+    font-weight: bold;
+    color: var(--timer-color);
+    font-size: 18px;
+}
+/* ================================================= */
+
 /* === MODAL (POPUP) === */
 .modal {
     display: none; 
